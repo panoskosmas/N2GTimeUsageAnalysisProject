@@ -16,11 +16,11 @@ import java.util.*;
 /**
  * Project 2 - In this class , we define variables such as 'analysis' , 'category' and 'device' that indicate us
  * the device , the category and the kind of analysis , for which the code will run. We read all the filenames (CSV files in folder)
- * We initialize and pass values (from CSVReader methods) to the desired outputs-results and we print them into .txt files.
+ * We initialize and pass values (calling CSVReader methods) to the desired outputs-results and we print them into txt files.
  * Clues like the number of usages, the duration , the wattage and the consumed energy of each usage are calculated. In addition ,
  * hourly, daily, weekly and monthly time-usage arrays are created to show us the distribution. We , also , calculate the
  * contribution of our data to the whole of hours,days,weeks or months. (Do we have data for all months? Do we have data for
- * month February? How many devices(houses) of our dataset contribute to Feb?)
+ * month February? How many devices(houses) of our dataset contribute to month February? etc)
  *
  * @author Panos Kosmas
  * @since 3/12/2019
@@ -59,7 +59,7 @@ public class TimeUsageAnalysis  {
         ArrayList<Double> powers;
         ArrayList<Double> kWhconsumed;
         /**
-         * We keep track of the durations, the powers and the energy of each device's usages and print them to txt files.
+         * We keep track of the durations, the powers and the energy for all device's usages and print them to txt files.
          */
         String durationsfile = "C:\\Users\\user\\Desktop\\project2_filenames\\"+category+"\\"+device+"\\durations_"+analysis+".txt";
         FileWriter writer2   = new FileWriter(durationsfile);
@@ -103,6 +103,9 @@ public class TimeUsageAnalysis  {
             numberOfUsagesArray[i]   = reader1.getNumberOfUsages();
             durationOfUsagesArray[i] = reader1.getDuration();
             numberOfUsages += reader1.getNumberOfUsages();
+            /**
+             * Print the results to duration.txt , powers.txt and kWhconsumed.txt respectively.
+             */
             CSVWriter.writeLine(writer2,Collections.singletonList("dur"+(i+1)+"="+durations));
             CSVWriter.writeLine(writer3,Collections.singletonList("pow"+(i+1)+"="+powers));
             CSVWriter.writeLine(writer4,Collections.singletonList("nrg"+(i+1)+"="+kWhconsumed));
@@ -115,7 +118,7 @@ public class TimeUsageAnalysis  {
 */
         }
         /**
-         * find files whose duration of measurements is the smallest & the highest respectively (just to know the depth of our data).
+         * find files, whose duration of measurement is the smallest & the highest respectively (just to know the size of our data).
          */
         int mindur = durationOfUsagesArray[0];
         int maxdur = 0;

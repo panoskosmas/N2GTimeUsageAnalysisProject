@@ -10,8 +10,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
- * This class is used for recognising every event among a specific device's data (CSV file of measurements for a specific
- * device in a house). We find the number of usages between the Start and the End of Measurement period. We find the max value
+ * This class is used for recognising every event among data for a specific device (CSV file of measurements for a specific
+ * device in a house). We find the number of total usages between the Start and the End of Measurement period. We find the max value
  * in Watts , the duration and the kWh consumed for every usage. Then, we distribute the usages among the hours of a day
  * the days of a week , the weeks and months of a year to make a statistical (time usage) analysis.
  *
