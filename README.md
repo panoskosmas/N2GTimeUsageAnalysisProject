@@ -13,4 +13,4 @@
 4. CSVWriter</ol>
 <ol>
 5. XYTimeMeasurements</ol>
-<p>Among these, only the first two of them (TimeUsageAnalysis and CSVReader classes) are enough to return all the information I need, and draw some conclusions. These, also, are the ones you should take under consideration.</p>
+<p>Among these, only the first two (TimeUsageAnalysis and CSVReader classes) are enough to return all the information I need, and draw some conclusions. These, also, are the ones you should take under consideration.</p>
