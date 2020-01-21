@@ -14,4 +14,4 @@
 <ol>
 5. XYTimeMeasurements</ol>
 Only the first two , among them, (TimeUsageAnalysis and CSVReader classes) are enough to return all the information I need, and draw some conclusions. These, also, are the ones you should take under consideration. You can find them in the following  
-[link] (N2GTimeUsageAnalysisProject/panosn2g/src/main/java/kosmasn2g/). </p>
+[link] (https://github.com/panoskosmas/N2GTimeUsageAnalysisProject/panosn2g/src/main/java/kosmasn2g/). </p>
