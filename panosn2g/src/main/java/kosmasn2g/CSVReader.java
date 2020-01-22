@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.*;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,156 +39,54 @@ class CSVReader {
     private ArrayList<Double> kWhconsumed     = new ArrayList<>();
     private ArrayList<Double> valuesstd       = new ArrayList<>();
     private DescriptiveStatistics ds1         = new DescriptiveStatistics();
+    /**
+     * These values are Constant but Different for every device. They are NOT magic numbers and have been emerged through research on the web.
+     * They represent the highest operating value of the under-consideration device (in Watts), the upper standby wattage found (or considered as
+     * a wattage that cannot be surpassed in standby mode), the lowest operating value of the device , the lowest and the highest acceptable
+     * values of usage duration (in minutes) of the device! (must not exceed some reasonable limits i.e 1800' > 1day)
+     * In the array of doubles, these are defined in order {upper_standby,lower_operating,higher_operating,lowMinutes,highMinutes};
+     */
+    private static Map<String , double []> hmap = new HashMap<>() {{
+       put("dvd" , new double[]{10.0, 15.0, 100.0, 5.0, 1440.0});
+       put("audiovisual_media", new double[]{15.0, 18.0, 200.0, 5.0, 1440.0});
+       put("stereo", new double[]{12.0, 20.0, 200.0, 5.0, 1440.0});
+       put("game_console", new double[]{25.0, 30.0, 300.0, 5.0, 1440.0});
+       put("laptop", new double[]{20.0, 23.0, 200.0, 5.0, 1440.0});
+       put("computer", new double[]{35.0, 40.0, 250.0, 5.0, 1440.0});
+       put("computer_screen", new double[]{16.0, 19.0, 210.0, 5.0, 1440.0});
+       put("apple_tv", new double[]{3.0, 3.0, 50.0, 5.0, 1440.0});
+       put("tv", new double[]{15.0, 20.0, 400.0, 5.0, 1440.0});
+       put("coffee_grinder", new double[]{15.0, 15.0, 1500.0, 0.01, 5.0});
+       put("coffee_maker", new double[]{80.0, 100.0, 2000.0, 0.01, 5.0});
+       put("espresso_machine", new double[]{60.0, 200.0, 3000.0, 0.01, 5.0});
+       put("kettle", new double[]{60.0, 600.0, 3500.0, 0.01, 10.0});
+       put("microwave", new double[]{20.0, 200.0, 2000.0, 0.10, 30.0});
+       put("stand_mixer", new double[]{75.0, 100.0, 2500.0, 0.01, 5.0});
+       put("steamer", new double[]{100.0, 200.0, 2000.0, 0.01, 10.0});
+       put("toaster", new double[]{250.0, 400.0, 2500.0, 0.01, 10.0});
+    }};
 
     /**
      *
      * @param filename      the CSV file which is under consideration
      * @param device        the device which is under consideration
-     * @param category1     the category of device (Ent,Cook etc). Helps us distinguish different cases
      * @param analysis      the kind of analysis - All days , OFF days or BUSINESS days
      * @throws IOException  an exception
      */
 
-    CSVReader(String filename, String device, String category1 , String analysis ) throws IOException {
+    CSVReader(String filename, String device, String analysis) throws IOException {
         String line       = "";
         String csvSplitBy = ",";
         BufferedReader br = new BufferedReader(new FileReader(Objects.requireNonNull(filename)));
 
         /**
-         * These values are Constant but Different for every device. They are NOT magic numbers and have been emerged through research on the web.
-         * They represent the higher operating value of the under-consideration device (in Watts), the upper standby wattage found , the
-         * lower operating value of device , the lowest and the highest Acceptable values of durations (in minutes) of the device!
-         * (must not exceed some reasonable limits i.e 1800' > 1day)
+         * Depending on which device is under consideration , go and pass the proper values to our variables.
          */
-        int higher_operation ;
-        int upper_standby    ;
-        int lower_operation  ;
-        double lowOpMinutes  ;
-        double highOpMinutes ;
-
-        switch (device) {
-            case "dvd":
-                upper_standby    = 10;
-                lower_operation  = 15;
-                higher_operation = 100;
-                lowOpMinutes     = 5.0;
-                highOpMinutes    = 1440.0;
-                break;
-            case "audiovisual_media":
-                upper_standby    = 15;
-                lower_operation  = 18;
-                higher_operation = 200;
-                lowOpMinutes     = 5.0;
-                highOpMinutes    = 1440.0;
-                break;
-            case "stereo":
-                upper_standby    = 12;
-                lower_operation  = 20;
-                higher_operation = 200;
-                lowOpMinutes     = 5.0;
-                highOpMinutes    = 1440.0;
-                break;
-            case "game_console":
-                upper_standby    = 25;
-                lower_operation  = 30;
-                higher_operation = 300;
-                lowOpMinutes     = 5.0;
-                highOpMinutes    = 1440.0;
-                break;
-            case "laptop":
-                upper_standby    = 20;
-                lower_operation  = 23;
-                higher_operation = 200;
-                lowOpMinutes     = 5.0;
-                highOpMinutes    = 1440.0;
-                break;
-            case "computer":
-                upper_standby    = 35;
-                lower_operation  = 40;
-                higher_operation = 350;
-                lowOpMinutes     = 5.0;
-                highOpMinutes    = 1440.0;
-                break;
-            case "computer_screen":
-                upper_standby    = 16;
-                lower_operation  = 19;
-                higher_operation = 210;
-                lowOpMinutes     = 5.0;
-                highOpMinutes    = 1440.0;
-                break;
-            case "apple_tv":
-                upper_standby    = 3;
-                lower_operation  = 3;
-                higher_operation = 50;
-                lowOpMinutes     = 5.0;
-                highOpMinutes    = 1440.0;
-                break;
-            case "tv":
-                upper_standby    = 15;
-                lower_operation  = 20;
-                higher_operation = 800;
-                lowOpMinutes     = 5.0;
-                highOpMinutes    = 1440.0;
-                break;
-            case "coffee_grinder":
-                upper_standby    = 15;
-                lower_operation  = 15;
-                higher_operation = 600;
-                lowOpMinutes     = 0.01;
-                highOpMinutes    = 3.0;
-                break;
-            case "coffee_maker":
-                upper_standby    = 80;
-                lower_operation  = 100;
-                higher_operation = 2000;
-                lowOpMinutes     = 0.01;
-                highOpMinutes    = 3.0;
-                break;
-            case "espresso_machine":
-                upper_standby    = 60;
-                lower_operation  = 200;
-                higher_operation = 3000;
-                lowOpMinutes     = 0.01;
-                highOpMinutes    = 3.0;
-                break;
-            case "kettle":
-                upper_standby    = 60;
-                lower_operation  = 600;
-                higher_operation = 3500;
-                lowOpMinutes     = 0.01;
-                highOpMinutes    = 3.0;
-                break;
-            case "microwave":
-                upper_standby    = 20;
-                lower_operation  = 200;
-                higher_operation = 2000;
-                lowOpMinutes     = 0.01;
-                highOpMinutes    = 15.0;
-                break;
-            case "stand_mixer":
-                upper_standby    = 75;
-                lower_operation  = 100;
-                higher_operation = 2500;
-                lowOpMinutes     = 0.01;
-                highOpMinutes    = 3.0;
-                break;
-            case "steamer":
-                upper_standby    = 100;
-                lower_operation  = 200;
-                higher_operation = 2000;
-                lowOpMinutes     = 0.01;
-                highOpMinutes    = 3.0;
-                break;
-            case "toaster":
-                upper_standby    = 350;
-                lower_operation  = 400;
-                higher_operation = 2500;
-                lowOpMinutes     = 0.01;
-                highOpMinutes    = 3.0;
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + device);
-        }
+        double upper_standby    = hmap.get(device)[0];
+        double lower_operation  = hmap.get(device)[1];
+        double higher_operation = hmap.get(device)[2];
+        double lowOpMinutes     = hmap.get(device)[3];
+        double highOpMinutes    = hmap.get(device)[4];
         /**
          * We initialize both ArrayLists values2 & times2 that help us make all the following calculations.
          */
@@ -202,7 +101,9 @@ class CSVReader {
                 String[] column = line.split(csvSplitBy);
                 to              = Long.parseLong(column[0]);
 
-                if ((Integer.parseInt(column[1]) > 0) && (Integer.parseInt(column[1]) < upper_standby)) { valuesstd.add(Double.parseDouble(column[1])); }
+                if ((Integer.parseInt(column[1]) > 0) && (Integer.parseInt(column[1]) < upper_standby)) {
+                    valuesstd.add(Double.parseDouble(column[1]));
+                }
                 if ((Integer.parseInt(column[1]) > 0) && (Integer.parseInt(column[1]) < higher_operation)) {
                             times2.add(Long.parseLong(column[0]));
                             values2.add(Double.parseDouble(column[1]));
@@ -274,23 +175,9 @@ class CSVReader {
                         i = j + 1;
                         /**
                         * IF duration of usage is not acceptable (depending our limits) --> dont take this usage into account.
-                        * else IF category = cooking and we have stack meter (over 15' duration) --> make this usage count for two smaller ones.
-                        * else save usage's normal stats.
+                        * ELSE save usage's normal stats.
                         */
-                        if ((usageDuration < lowOpMinutes)||((category1.equals("entertainment"))&&((usageDuration > highOpMinutes)))) { break; }
-                        else if ((category1.equals("cooking"))&&(usageDuration > highOpMinutes)) {
-                            numberOfusages += 2;
-                            //durations
-                            usageDuration = highOpMinutes;
-                            durations.add(usageDuration);
-                            durations.add(usageDuration);
-                            //powers
-                            powers.add(maxpower);
-                            powers.add(maxpower);
-                            // kWh consumption
-                            kWhconsumed.add(wattage);
-                            kWhconsumed.add(wattage);
-                        }
+                        if ((usageDuration < lowOpMinutes)||(((usageDuration > highOpMinutes)))) { break; } //avoid stack meters
                         else {
                             numberOfusages++;
                             durations.add(usageDuration);

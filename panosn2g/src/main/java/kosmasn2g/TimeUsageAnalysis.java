@@ -1,20 +1,11 @@
 package kosmasn2g;
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.jfree.chart.plot.Plot;
-import org.jfree.chart.ui.UIUtils;
-import org.jfree.ui.RefineryUtilities;
-import javax.swing.*;
-import java.awt.*;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.*;
 
 /**
- * Project 2 - In this class , we define variables such as 'analysis' , 'category' and 'device' that indicate us
+ * Project 2 - In this class , we define the variables 'analysis', 'category' and 'device' which indicate us
  * the device , the category and the kind of analysis , for which the code will run. We read all the filenames (CSV files in folder)
  * We initialize and pass values (calling CSVReader methods) to the desired outputs-results and we print them into txt files.
  * Clues like the number of usages, the duration , the wattage and the consumed energy of each usage are calculated. In addition ,
@@ -29,9 +20,9 @@ import java.util.*;
 public class TimeUsageAnalysis  {
     public static void main(String[] args ) throws IOException {
 
-        String analysis         = "bus"; //off , bus or all - days
-        String category         = "entertainment" ;
-        String device           = "tv" ;
+        String analysis         = "all" ; //off , bus or all - days
+        String category         = "cooking" ;
+        String device           = "stand_mixer" ;
 
         /**
          * The "files.txt" include all folder's filenames. We read them and pass the names to an ArrayList.
@@ -69,8 +60,9 @@ public class TimeUsageAnalysis  {
         FileWriter writer4   = new FileWriter(kWhsfile);
 //--------------------------------------------FOR Number Of Devices in the Folder---------------------------------------
         for(int i=0;i<source1.getLength();i++) { //source1.getLength()
+
             String filename       = "E:/project2-NEW/" + category + "/" + device + "/" + names.get(i);
-            CSVReader reader1  = new CSVReader(filename, device, category , analysis );
+            CSVReader reader1  = new CSVReader(filename, device, analysis );
             System.out.println("File under consideration: "+filename+", No: "+(i+1));
 
             int [] usagesPerHour  = reader1.getHourlyDistributionOfUsages();
@@ -83,6 +75,7 @@ public class TimeUsageAnalysis  {
             /**
              * Find every device's above statistics and add them to the final sums.
              */
+
             for(int index=0;index<24;index++){ totalUsagesPerHour[index] += usagesPerHour[index]; }
             for(int index=0;index<7;index++){ totalUsagesPerDay[index] += usagesPerDay[index]; }
             for(int index=0;index<53;index++){ totalUsagesPerWeek[index] += usagesPerWeek[index]; }
@@ -95,6 +88,7 @@ public class TimeUsageAnalysis  {
             /**
             * Find every device's above statistics and add them to the final sums.
             */
+
             for(int index=0;index<24;index++){ hdiv[index] += devicesContributedHourly[index]; }
             for(int index=0;index<7;index++) { ddiv[index] += devicesContributedDaily[index];  }
             for(int index=0;index<53;index++){ wdiv[index] += devicesContributedWeekly[index]; }
@@ -106,6 +100,7 @@ public class TimeUsageAnalysis  {
             /**
              * Print the results to duration.txt , powers.txt and kWhconsumed.txt respectively.
              */
+
             CSVWriter.writeLine(writer2,Collections.singletonList("dur"+(i+1)+"="+durations));
             CSVWriter.writeLine(writer3,Collections.singletonList("pow"+(i+1)+"="+powers));
             CSVWriter.writeLine(writer4,Collections.singletonList("nrg"+(i+1)+"="+kWhconsumed));
@@ -120,12 +115,16 @@ public class TimeUsageAnalysis  {
         /**
          * find files, whose duration of measurement is the smallest & the highest respectively (just to know the size of our data).
          */
+
         int mindur = durationOfUsagesArray[0];
         int maxdur = 0;
         for (int index=0; index<source1.getLength(); index++){
             if(durationOfUsagesArray[index]<=mindur){mindur=durationOfUsagesArray[index];}
             if(durationOfUsagesArray[index]>maxdur) {maxdur=durationOfUsagesArray[index];}
         }
+
+
+
         System.out.println("NoU="+Arrays.toString(numberOfUsagesArray)+"\nH="+Arrays.toString(totalUsagesPerHour)+"\nD="+Arrays.toString(totalUsagesPerDay)+"\nW="+Arrays.toString(totalUsagesPerWeek)+"\nM="+Arrays.toString(totalUsagesPerMonth));
         String filename1   = "C:\\Users\\user\\Desktop\\project2_filenames\\"+category+"\\"+device+"\\HDWMstats_"+device+"_"+analysis+".txt";
         FileWriter writer1 = new FileWriter(filename1);
