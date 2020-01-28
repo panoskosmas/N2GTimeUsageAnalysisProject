@@ -21,8 +21,8 @@ public class TimeUsageAnalysis  {
     public static void main(String[] args ) throws IOException {
 
         String analysis         = "all" ; //off , bus or all - days
-        String category         = "cooking" ;
-        String device           = "stand_mixer" ;
+        String category         = "entertainment" ;
+        String device           = "computer" ;
 
         /**
          * The "files.txt" include all folder's filenames. We read them and pass the names to an ArrayList.

@@ -145,17 +145,31 @@ class CSVReader {
         */
         while (i < times2.size()) {
             Calendar startOfUse = new GregorianCalendar();
-            startOfUse.setTimeZone(TimeZone.getTimeZone("GMT+01"));
             startOfUse.setTime(new Date(times2.get(i)));
-            /**
-             * In this section, there are 3 cases. Depending on which type of analysis we work on (all/off or business days),
-             * we accept values whose timestamps are All days, MonTueWenThurFridays or Sundays/Saturdays respectively.
-             */
+            if ((startOfUse.get(Calendar.MONTH)==Calendar.MARCH)||(startOfUse.get(Calendar.MONTH)==Calendar.APRIL)||(startOfUse.get(Calendar.MONTH)==Calendar.MAY)||(startOfUse.get(Calendar.MONTH)==Calendar.JUNE)||(startOfUse.get(Calendar.MONTH)==Calendar.JULY)||(startOfUse.get(Calendar.MONTH)==Calendar.AUGUST)||(startOfUse.get(Calendar.MONTH)==Calendar.SEPTEMBER)){
+                startOfUse.setTimeZone(TimeZone.getTimeZone("GMT+02:00"));
+            }
+            else {startOfUse.setTimeZone(TimeZone.getTimeZone("GMT+01:00"));}
+            startOfUse.setTime(new Date(times2.get(i)));
+/*
+            System.out.println("ts="+times2.get(i));
+            System.out.println("gmt="+startOfUse.getTimeZone());
+            System.out.println("date="+startOfUse);
+*/
+                /**
+                 * In this section, there are 3 cases. Depending on which type of analysis we work on (all/off or business days),
+                 * we accept values whose timestamps are All days, MonTueWenThurFridays or Sundays/Saturdays respectively.
+                 */
             if (((analysis.equals("all"))&&(values2.get(i) > threshold))||((analysis.equals("off"))&&((startOfUse.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY)||(startOfUse.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY))&&(values2.get(i) > threshold))||((analysis.equals("bus"))&&((startOfUse.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY)&&(startOfUse.get(Calendar.DAY_OF_WEEK)!=Calendar.SATURDAY))&&(values2.get(i) > threshold))) {
                     for (j = i; j < times2.size(); j++) {
                         Calendar endOfUse = new GregorianCalendar();
-                        endOfUse.setTimeZone(TimeZone.getTimeZone("GMT+01"));
                         endOfUse.setTime(new Date(times2.get(j)));
+                        if ((endOfUse.get(Calendar.MONTH)==Calendar.MARCH)||(endOfUse.get(Calendar.MONTH)==Calendar.APRIL)||(endOfUse.get(Calendar.MONTH)==Calendar.MAY)||(endOfUse.get(Calendar.MONTH)==Calendar.JUNE)||(endOfUse.get(Calendar.MONTH)==Calendar.JULY)||(endOfUse.get(Calendar.MONTH)==Calendar.AUGUST)||(endOfUse.get(Calendar.MONTH)==Calendar.SEPTEMBER)){
+                            endOfUse.setTimeZone(TimeZone.getTimeZone("GMT+02"));
+                        }
+                        else {endOfUse.setTimeZone(TimeZone.getTimeZone("GMT+01"));}
+                        endOfUse.setTime(new Date(times2.get(j)));
+
                         if ((values2.get(j) <= threshold)){
                             /**
                              * If it gets in , it means that we have a use, because initially it surpassed the threshold (i)
@@ -244,10 +258,19 @@ class CSVReader {
          *  (has measurements for).
          */
         Calendar startOfMeasurement = new GregorianCalendar();
-        startOfMeasurement.setTimeZone(TimeZone.getTimeZone("GMT+01"));
         startOfMeasurement.setTime(new Date(from));
+        if ((startOfMeasurement.get(Calendar.MONTH)==Calendar.MARCH)||(startOfMeasurement.get(Calendar.MONTH)==Calendar.APRIL)||(startOfMeasurement.get(Calendar.MONTH)==Calendar.MAY)||(startOfMeasurement.get(Calendar.MONTH)==Calendar.JUNE)||(startOfMeasurement.get(Calendar.MONTH)==Calendar.JULY)||(startOfMeasurement.get(Calendar.MONTH)==Calendar.AUGUST)||(startOfMeasurement.get(Calendar.MONTH)==Calendar.SEPTEMBER)){
+            startOfMeasurement.setTimeZone(TimeZone.getTimeZone("GMT+02"));
+        }
+        else {startOfMeasurement.setTimeZone(TimeZone.getTimeZone("GMT+01"));}
+        startOfMeasurement.setTime(new Date(from));
+
         Calendar endOfMeasurement = new GregorianCalendar();
-        endOfMeasurement.setTimeZone(TimeZone.getTimeZone("GMT+01"));
+        endOfMeasurement.setTime(new Date(to));
+        if ((endOfMeasurement.get(Calendar.MONTH)==Calendar.MARCH)||(endOfMeasurement.get(Calendar.MONTH)==Calendar.APRIL)||(endOfMeasurement.get(Calendar.MONTH)==Calendar.MAY)||(endOfMeasurement.get(Calendar.MONTH)==Calendar.JUNE)||(endOfMeasurement.get(Calendar.MONTH)==Calendar.JULY)||(endOfMeasurement.get(Calendar.MONTH)==Calendar.AUGUST)||(endOfMeasurement.get(Calendar.MONTH)==Calendar.SEPTEMBER)){
+            endOfMeasurement.setTimeZone(TimeZone.getTimeZone("GMT+02"));
+        }
+        else{endOfMeasurement.setTimeZone(TimeZone.getTimeZone("GMT+01"));}
         endOfMeasurement.setTime(new Date(to));
         /**
         * If totalDuration is more than a year --> all months have measurements
@@ -299,7 +322,6 @@ class CSVReader {
     }
     /** This is the getter method for the Mean value of valuesstd-Arraylist. Practically, it returns a value representing
      *  the upper "standby" wattage of the under-consideration device.
-     * @return the StartDate value , as a Date .
      */
     private double getMeanStd(){
         ds1.clear();
