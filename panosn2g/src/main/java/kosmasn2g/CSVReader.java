@@ -82,9 +82,9 @@ class CSVReader {
         /**
          * Depending on which device is under consideration , go and pass the proper values to our variables.
          */
-        double upper_standby    = hmap.get(device)[0];
-        double lower_operation  = hmap.get(device)[1];
-        double higher_operation = hmap.get(device)[2];
+        double upperStandby    = hmap.get(device)[0];
+        double lowerOperation  = hmap.get(device)[1];
+        double higherOperation = hmap.get(device)[2];
         double lowOpMinutes     = hmap.get(device)[3];
         double highOpMinutes    = hmap.get(device)[4];
         /**
@@ -101,10 +101,10 @@ class CSVReader {
                 String[] column = line.split(csvSplitBy);
                 to              = Long.parseLong(column[0]);
 
-                if ((Integer.parseInt(column[1]) > 0) && (Integer.parseInt(column[1]) < upper_standby)) {
+                if ((Integer.parseInt(column[1]) > 0) && (Integer.parseInt(column[1]) < upperStandby)) {
                     valuesstd.add(Double.parseDouble(column[1]));
                 }
-                if ((Integer.parseInt(column[1]) > 0) && (Integer.parseInt(column[1]) < higher_operation)) {
+                if ((Integer.parseInt(column[1]) > 0) && (Integer.parseInt(column[1]) < higherOperation)) {
                             times2.add(Long.parseLong(column[0]));
                             values2.add(Double.parseDouble(column[1]));
                 }
@@ -136,7 +136,7 @@ class CSVReader {
          * So that we use it to recognise every usage (usage starts when our measurement value surpasses the threshold
          * and it ends , when our value is again below the threshold).
          */
-        if (standbyMean <= lower_operation) { threshold = (standbyMean + lower_operation) / 2; }
+        if (standbyMean <= lowerOperation) { threshold = (standbyMean + lowerOperation) / 2; }
         else { threshold = standbyMean + 1; }
         System.out.println(threshold);
         /**

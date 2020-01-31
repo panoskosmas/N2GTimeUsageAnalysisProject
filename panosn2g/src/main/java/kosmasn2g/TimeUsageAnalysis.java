@@ -20,9 +20,9 @@ import java.util.*;
 public class TimeUsageAnalysis  {
     public static void main(String[] args ) throws IOException {
 
-        String analysis         = "all" ; //off , bus or all - days
+        String analysis         = "bus" ; //off , bus or all - days
         String category         = "entertainment" ;
-        String device           = "computer" ;
+        String device           = "tv" ;
 
         /**
          * The "files.txt" include all folder's filenames. We read them and pass the names to an ArrayList.
@@ -44,6 +44,14 @@ public class TimeUsageAnalysis  {
         int [] totalUsagesPerMonth   = new int [12];
         int [] numberOfUsagesArray   = new int [source1.getLength()];
         int [] durationOfUsagesArray = new int [source1.getLength()];
+        float [] hoursProb           = new float [24];
+        float [] daysProb            = new float [7];
+        float [] weeksProb           = new float [53];
+        float [] monthsProb          = new float [12];
+        int counterhours             = 0;
+        int counterdays              = 0;
+        int counterweeks             = 0;
+        int countermonths            = 0;
         int numberOfUsages           = 0;
 
         ArrayList<Double> durations;
@@ -52,11 +60,11 @@ public class TimeUsageAnalysis  {
         /**
          * We keep track of the durations, the powers and the energy for all device's usages and print them to txt files.
          */
-        String durationsfile = "C:\\Users\\user\\Desktop\\project2_filenames\\"+category+"\\"+device+"\\durations_"+analysis+".txt";
+        String durationsfile = "C:\\Users\\user\\Desktop\\project2_filenames\\"+category+"\\"+device+"\\durations\\durations_"+analysis+".txt";
         FileWriter writer2   = new FileWriter(durationsfile);
-        String powersfile    = "C:\\Users\\user\\Desktop\\project2_filenames\\"+category+"\\"+device+"\\powers_"+analysis+".txt";
+        String powersfile    = "C:\\Users\\user\\Desktop\\project2_filenames\\"+category+"\\"+device+"\\powers\\powers_"+analysis+".txt";
         FileWriter writer3   = new FileWriter(powersfile);
-        String kWhsfile      = "C:\\Users\\user\\Desktop\\project2_filenames\\"+category+"\\"+device+"\\kWhconsumed_"+analysis+".txt";
+        String kWhsfile      = "C:\\Users\\user\\Desktop\\project2_filenames\\"+category+"\\"+device+"\\kWhconsumed\\kWhconsumed_"+analysis+".txt";
         FileWriter writer4   = new FileWriter(kWhsfile);
 //--------------------------------------------FOR Number Of Devices in the Folder---------------------------------------
         for(int i=0;i<source1.getLength();i++) { //source1.getLength()
@@ -100,10 +108,9 @@ public class TimeUsageAnalysis  {
             /**
              * Print the results to duration.txt , powers.txt and kWhconsumed.txt respectively.
              */
-
-            CSVWriter.writeLine(writer2,Collections.singletonList("dur"+(i+1)+"="+durations));
-            CSVWriter.writeLine(writer3,Collections.singletonList("pow"+(i+1)+"="+powers));
-            CSVWriter.writeLine(writer4,Collections.singletonList("nrg"+(i+1)+"="+kWhconsumed));
+                CSVWriter.writeLine(writer2, Collections.singletonList("dur" + (i + 1) + "=" + durations));
+                CSVWriter.writeLine(writer3, Collections.singletonList("pow" + (i + 1) + "=" + powers));
+                CSVWriter.writeLine(writer4, Collections.singletonList("nrg" + (i + 1) + "=" + kWhconsumed));
 //-----------------------------Printing Plots of particular Days 1234567--> Mon to Sun.---------------------------------
 /*
             final XYTimeMeasurements demo = new XYTimeMeasurements("All-time DVD"+i+" Measuremnts" , filename , "1234567");
@@ -124,19 +131,27 @@ public class TimeUsageAnalysis  {
         }
 
 
+        for(int index=0;index<24;index++){ counterhours += totalUsagesPerHour[index]; }
+        for(int index=0;index<7;index++) { counterdays += totalUsagesPerDay[index]; }
+        for(int index=0;index<53;index++){ counterweeks += totalUsagesPerWeek[index];}
+        for(int index=0;index<12;index++){ countermonths += totalUsagesPerMonth[index]; }
+        for(int index=0;index<24;index++){ hoursProb[index] = 100* (float) totalUsagesPerHour[index]/counterhours; }
+        for(int index=0;index<7;index++) { daysProb[index] = 100*(float) totalUsagesPerDay[index]/counterdays; }
+        for(int index=0;index<53;index++){ weeksProb[index] = 100*(float) totalUsagesPerWeek[index]/counterweeks; }
+        for(int index=0;index<12;index++){ monthsProb[index] = 100*(float) totalUsagesPerMonth[index]/countermonths; }
 
         System.out.println("NoU="+Arrays.toString(numberOfUsagesArray)+"\nH="+Arrays.toString(totalUsagesPerHour)+"\nD="+Arrays.toString(totalUsagesPerDay)+"\nW="+Arrays.toString(totalUsagesPerWeek)+"\nM="+Arrays.toString(totalUsagesPerMonth));
         String filename1   = "C:\\Users\\user\\Desktop\\project2_filenames\\"+category+"\\"+device+"\\HDWMstats_"+device+"_"+analysis+".txt";
         FileWriter writer1 = new FileWriter(filename1);
-        CSVWriter.writeLine(writer1,Collections.singletonList("NumberOfDevices="+source1.getLength()+"\nUsages="+numberOfUsages+"\nMinDuration="+mindur+"\tMaxDuration="+maxdur+"\nDoU="+Arrays.toString(durationOfUsagesArray)+"\nNoU="+Arrays.toString(numberOfUsagesArray)+"\nH="+Arrays.toString(totalUsagesPerHour)+"\nD="+Arrays.toString(totalUsagesPerDay)+"\nW="+Arrays.toString(totalUsagesPerWeek)+"\nM="+Arrays.toString(totalUsagesPerMonth)+"\ncontrh="+ Arrays.toString(hdiv) +"\ncontrd="+ Arrays.toString(ddiv) +"\ncontrw="+ Arrays.toString(wdiv) +"\ncontrm="+ Arrays.toString(mdiv)));
+        CSVWriter.writeLine(writer1,Collections.singletonList("NumberOfDevices="+source1.getLength()+"\nUsages="+numberOfUsages+"\nMinDuration="+mindur+"\tMaxDuration="+maxdur+"\nDoU="+Arrays.toString(durationOfUsagesArray)+"\nNoU="+Arrays.toString(numberOfUsagesArray)+"\nH"+analysis+"="+Arrays.toString(totalUsagesPerHour)+"\nD"+analysis+"="+Arrays.toString(totalUsagesPerDay)+"\nW"+analysis+"="+Arrays.toString(totalUsagesPerWeek)+"\nM"+analysis+"="+Arrays.toString(totalUsagesPerMonth)+"\n%H"+analysis+"="+Arrays.toString(hoursProb)+"\n%D"+analysis+"="+Arrays.toString(daysProb)+"\n%W"+analysis+"="+Arrays.toString(weeksProb)+"\n%M"+analysis+"="+Arrays.toString(monthsProb)+"\ncontrh="+ Arrays.toString(hdiv) +"\ncontrd="+ Arrays.toString(ddiv) +"\ncontrw="+ Arrays.toString(wdiv) +"\ncontrm="+ Arrays.toString(mdiv)));
 
-        writer1.flush();
-        writer1.close();
-        writer2.flush();
-        writer2.close();
-        writer3.flush();
-        writer3.close();
-        writer4.flush();
-        writer4.close();
+            writer1.flush();
+            writer1.close();
+            writer2.flush();
+            writer2.close();
+            writer3.flush();
+            writer3.close();
+            writer4.flush();
+            writer4.close();
     }
 }
