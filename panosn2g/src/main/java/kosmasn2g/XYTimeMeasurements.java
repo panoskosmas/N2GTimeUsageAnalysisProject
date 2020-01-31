@@ -20,7 +20,6 @@ class XYTimeMeasurements extends ApplicationFrame {
     XYTimeMeasurements(final String title,String filename,String word) throws IOException {
 
         super(title);
-        int counter = 0;
         BufferedReader br;
         String line = "";
         String [] data;
@@ -59,9 +58,7 @@ class XYTimeMeasurements extends ApplicationFrame {
                 }
             }
             else { assert true;}
-            counter++;
-            if (counter > 3900000) {break;}
-        }
+            }
         final XYSeriesCollection set = new XYSeriesCollection(series);
         final JFreeChart chart = ChartFactory.createXYStepChart(
                 "All Time DVD's Measurements" ,
